@@ -200,6 +200,18 @@ class ProjectV24 extends ProjectV22 {
     const url = new URL(window.location.href);
     url.searchParams.set('version', version);
     url.searchParams.set('t', Date.now());
+    
+    // Add required scripts for this version
+    const vNum = parseInt(version.replace('v', ''));
+    const requiredScripts = [];
+    for (let i = 1; i <= vNum; i++) {
+      // Skip v18 as it failed
+      if (i !== 18) {
+        requiredScripts.push(`v${i}/main.js`);
+      }
+    }
+    url.searchParams.set('scripts', JSON.stringify(requiredScripts));
+    
     return url.toString();
   }
 
