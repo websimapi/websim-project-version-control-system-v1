@@ -1,0 +1,141 @@
+/* Inherit v12 styles */
+@import url('../v12/styles.css');
+
+/* V13 specific styles */
+.storage-info {
+  background: linear-gradient(135deg, #fff, #f8f9fa);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+.storage-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.storage-details p {
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.storage-data {
+  margin-top: 1.5rem;
+}
+
+.storage-data ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.5rem;
+}
+
+.storage-data li {
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.persistence-controls {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.persistence-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.persistence-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.persistence-btn.backup {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+}
+
+.persistence-btn.clear {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+}
+
+.storage-usage-bar {
+  width: 100%;
+  height: 8px;
+  background: #f0f2f5;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.usage-fill {
+  height: 100%;
+  background: linear-gradient(to right, #3498db, #2ecc71);
+  transition: width 0.3s ease;
+}
+
+.backup-restore {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.backup-restore h4 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.backup-file-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px dashed #e9ecef;
+  border-radius: 8px;
+  margin: 1rem 0;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backup-file-input:hover {
+  border-color: #3498db;
+  background: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+  .storage-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .persistence-controls {
+    flex-direction: column;
+  }
+  
+  .backup-restore {
+    padding: 1rem;
+  }
+}

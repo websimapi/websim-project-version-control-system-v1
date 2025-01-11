@@ -2,8 +2,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Version Control System - V11</title>
-  <link rel="stylesheet" href="v11/styles.css">
+  <title>Project Version Control System - V13</title>
+  <link rel="stylesheet" href="v13/styles.css">
 </head>
 <body>
   <div class="version-container">
@@ -20,7 +20,8 @@
         <button class="command-btn" data-command="!history">Merge History</button>
         <button class="command-btn" data-command="!timeline">Timeline</button>
         <button class="command-btn" data-command="!metrics">Metrics</button>
-        <button class="command-btn" data-command="!switch v11">Switch to Latest</button>
+        <button class="command-btn" data-command="!storage">Storage Info</button>
+        <button class="command-btn" data-command="!switch v13">Switch to Latest</button>
         <button class="command-btn" data-command="!help">Help</button>
       </div>
     </div>
@@ -51,9 +52,11 @@
   <script src="v9/main.js"></script>
   <script src="v10/main.js"></script>
   <script src="v11/main.js"></script>
+  <script src="v12/main.js"></script>
+  <script src="v13/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const project = new ProjectV11();
+      window.project = new ProjectV13();
       project.initialize();
     });
   </script>
