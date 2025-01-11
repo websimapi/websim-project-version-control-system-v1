@@ -7,9 +7,12 @@ class VersionControl {
   }
 
   initializeVersions() {
+    const now = new Date();
+    const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
+
     this.versions.set('v1', {
       version: 'v1',
-      timestamp: new Date('2024-01-01'),
+      timestamp: new Date(now - (oneDay * 11)),
       description: 'Initial version with basic version display functionality',
       alias: 'version_one',
       features: ['version display', 'basic UI']
@@ -17,7 +20,7 @@ class VersionControl {
 
     this.versions.set('v2', {
       version: 'v2',
-      timestamp: new Date('2024-01-02'),
+      timestamp: new Date(now - (oneDay * 10)),
       description: 'Enhanced version with command system and history tracking',
       alias: 'version_two',
       features: ['command system', 'history tracking', 'version comparison']
@@ -25,7 +28,7 @@ class VersionControl {
 
     this.versions.set('v3', {
       version: 'v3',
-      timestamp: new Date('2024-01-03'),
+      timestamp: new Date(now - (oneDay * 9)),
       description: 'Added interactive command buttons and UI improvements',
       alias: 'version_three',
       features: ['quick access buttons', 'improved UI', 'command shortcuts']
@@ -33,7 +36,7 @@ class VersionControl {
 
     this.versions.set('v4', {
       version: 'v4',
-      timestamp: new Date('2024-01-04'),
+      timestamp: new Date(now - (oneDay * 8)),
       description: 'Enhanced version management with detailed version tracking',
       alias: 'version_four',
       features: ['advanced version tracking', 'version dependencies', 'extended command set']
@@ -41,7 +44,7 @@ class VersionControl {
 
     this.versions.set('v5', {
       version: 'v5',
-      timestamp: new Date('2024-01-05'),
+      timestamp: new Date(now - (oneDay * 7)),
       description: 'Smart merging capabilities and conflict resolution',
       alias: 'version_five',
       features: ['smart merging', 'conflict resolution', 'version branching']
@@ -49,7 +52,7 @@ class VersionControl {
 
     this.versions.set('v6', {
       version: 'v6',
-      timestamp: new Date('2024-01-06'),
+      timestamp: new Date(now - (oneDay * 6)),
       description: 'Advanced branch management with visual representation',
       alias: 'version_six',
       features: ['branch visualization', 'version switching', 'interactive branch management']
@@ -57,7 +60,7 @@ class VersionControl {
 
     this.versions.set('v7', {
       version: 'v7',
-      timestamp: new Date('2024-01-07'),
+      timestamp: new Date(now - (oneDay * 5)),
       description: 'Enhanced visualization and detailed branch metrics',
       alias: 'version_seven',
       features: ['detailed branch visualization', 'merge history tracking', 'branch metrics', 'timeline view']
@@ -65,7 +68,7 @@ class VersionControl {
 
     this.versions.set('v8', {
       version: 'v8',
-      timestamp: new Date('2024-01-08'),
+      timestamp: new Date(now - (oneDay * 4)),
       description: 'Advanced dependency tracking and conflict resolution',
       alias: 'version_eight',
       features: ['advanced dependency tracking', 'smart conflict resolution', 'automated merging']
@@ -73,7 +76,7 @@ class VersionControl {
 
     this.versions.set('v9', {
       version: 'v9',
-      timestamp: new Date('2024-01-09'),
+      timestamp: new Date(now - (oneDay * 3)),
       description: 'Enhanced visualization with interactive timeline',
       alias: 'version_nine',
       features: ['interactive timeline', 'advanced metrics', 'real-time updates']
@@ -81,7 +84,7 @@ class VersionControl {
 
     this.versions.set('v10', {
       version: 'v10',
-      timestamp: new Date('2024-01-10'),
+      timestamp: new Date(now - (oneDay * 2)),
       description: 'Complete version management system with advanced features',
       alias: 'version_ten',
       features: ['complete version management', 'advanced visualization', 'comprehensive metrics']
@@ -89,7 +92,7 @@ class VersionControl {
 
     this.versions.set('v11', {
       version: 'v11',
-      timestamp: new Date('2024-01-11'),
+      timestamp: new Date(now - (oneDay * 1)),
       description: 'Enhanced version control with complete history tracking',
       alias: 'version_eleven',
       features: ['complete history tracking', 'advanced branch management', 'comprehensive version control']
