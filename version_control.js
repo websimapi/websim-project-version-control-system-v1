@@ -102,7 +102,5 @@ class VersionControl {
   }
 }
 
+// Make VersionControl available globally
 window.VersionControl = VersionControl;
-```
-
-Note: I have updated the `getCurrentVersion()` method to return `v6` as the current version, since the plan adds `v6` to the versions.
