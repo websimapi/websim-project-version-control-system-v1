@@ -2,8 +2,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Version Control System - V17</title>
-  <link rel="stylesheet" href="v17/styles.css">
+  <title>Project Version Control System - V19</title>
+  <link rel="stylesheet" href="v19/styles.css">
 </head>
 <body>
   <div class="version-switch-progress">
@@ -48,59 +48,50 @@
   <!-- Load initial version control system -->
   <script src="version_control.js"></script>
   
-  <!-- Initialize version loading system -->
+  <!-- Load all versions in order -->
+  <script src="v1/main.js"></script>
+  <script src="v2/main.js"></script>
+  <script src="v3/main.js"></script>
+  <script src="v4/main.js"></script>
+  <script src="v5/main.js"></script>
+  <script src="v6/main.js"></script>
+  <script src="v7/main.js"></script>
+  <script src="v8/main.js"></script>
+  <script src="v9/main.js"></script>
+  <script src="v10/main.js"></script>
+  <script src="v11/main.js"></script>
+  <script src="v12/main.js"></script>
+  <script src="v13/main.js"></script>
+  <script src="v14/main.js"></script>
+  <script src="v15/main.js"></script>
+  <script src="v16/main.js"></script>
+  <script src="v17/main.js"></script>
+  <script src="v19/main.js"></script>
+  
+  <!-- Initialize latest version -->
   <script>
-    // Create a version loader to handle dynamic script loading
-    class VersionLoader {
-      constructor() {
-        this.loadedVersions = new Set();
-      }
-
-      async loadVersion(version) {
-        const vNum = parseInt(version.replace('v', ''));
-        if (this.loadedVersions.has(vNum)) return;
-
-        try {
-          await this.loadScript(`/v${vNum}/main.js`);
-          this.loadedVersions.add(vNum);
-        } catch (error) {
-          console.error(`Error loading version ${version}:`, error);
-          throw error;
-        }
-      }
-
-      loadScript(src) {
-        return new Promise((resolve, reject) => {
-          const script = document.createElement('script');
-          script.src = src;
-          script.onload = resolve;
-          script.onerror = reject;
-          document.body.appendChild(script);
-        });
-      }
-    }
-
-    // Initialize loader and project
     document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        window.versionLoader = new VersionLoader();
-        
-        // Load all versions up to current
-        for (let i = 1; i <= 17; i++) {
-          await versionLoader.loadVersion(`v${i}`);
-        }
+      // Check if this is a version iframe
+      const urlParams = new URLSearchParams(window.location.search);
+      const frameVersion = urlParams.get('version');
 
-        // Initialize latest version
-        window.project = new ProjectV17();
-        await project.initialize();
-        console.log('Version control system initialized successfully');
-      } catch (error) {
-        console.error('Error initializing version control system:', error);
-        document.getElementById('version-display').innerHTML = `
-          <div class="error-message">
-            Error initializing version control system. Please check the console for details.
-          </div>
-        `;
+      if (frameVersion) {
+        // This is a version iframe - wait for initialization message
+        console.log(`Version frame ${frameVersion} waiting for initialization`);
+      } else {
+        // This is the main window - initialize normally
+        try {
+          window.project = new ProjectV19();
+          await project.initialize();
+          console.log('Version control system initialized successfully');
+        } catch (error) {
+          console.error('Error initializing version control system:', error);
+          document.getElementById('version-display').innerHTML = `
+            <div class="error-message">
+              Error initializing version control system. Please check the console for details.
+            </div>
+          `;
+        }
       }
     });
   </script>
