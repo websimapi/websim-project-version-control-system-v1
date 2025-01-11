@@ -8,6 +8,20 @@
 <body>
   <div class="version-container">
     <h1 class="version-header">Project Version Control System</h1>
+    
+    <!-- Command Quick Access Panel -->
+    <div class="command-quick-access">
+      <h3>Quick Commands</h3>
+      <div class="command-buttons">
+        <button class="command-btn" data-command="!list">List Versions</button>
+        <button class="command-btn" data-command="!info v1">Info V1</button>
+        <button class="command-btn" data-command="!info v2">Info V2</button>
+        <button class="command-btn" data-command="!diff v1 v2">Compare V1 & V2</button>
+        <button class="command-btn" data-command="!help">Help</button>
+        <button class="command-btn" data-command="!merge v1 v2">Merge V1 & V2</button>
+      </div>
+    </div>
+
     <div class="command-center">
       <input type="text" id="command-input" placeholder="Enter command (e.g., !list, !info v1, !diff v1 v2)">
       <button id="execute-command">Execute</button>

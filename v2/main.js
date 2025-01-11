@@ -11,14 +11,26 @@ class ProjectV2 {
   }
 
   setupEventListeners() {
+    // Execute command button
     document.getElementById('execute-command').addEventListener('click', () => {
       this.executeCommand();
     });
 
+    // Command input enter key
     document.getElementById('command-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         this.executeCommand();
       }
+    });
+
+    // Quick access command buttons
+    document.querySelectorAll('.command-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const command = e.target.dataset.command;
+        const commandInput = document.getElementById('command-input');
+        commandInput.value = command;
+        this.executeCommand();
+      });
     });
   }
 
