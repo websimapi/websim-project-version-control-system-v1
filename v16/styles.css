@@ -1,0 +1,148 @@
+/* Inherit v15 styles */
+@import url('../v15/styles.css');
+
+/* V16 specific styles */
+.interactive-timeline {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.timeline-wrapper {
+  position: relative;
+  padding: 2rem 0;
+  margin: 2rem 0;
+}
+
+.timeline-track {
+  position: relative;
+  height: 4px;
+  background: #f0f2f5;
+  margin: 2rem 0;
+}
+
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e9ecef;
+  transform: translateY(-50%);
+}
+
+.timeline-point {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: white;
+  border: 3px solid #3498db;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.timeline-point:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.timeline-point.active {
+  background: #3498db;
+  border-color: #2980b9;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+}
+
+.point-label {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.85em;
+  color: #7f8c8d;
+  white-space: nowrap;
+}
+
+.point-info {
+  position: absolute;
+  bottom: calc(100% + 20px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: max-content;
+  max-width: 300px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.timeline-point.show-info .point-info {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+}
+
+.point-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+}
+
+.point-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0.5rem 0;
+}
+
+.switch-version-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.switch-version-btn:hover {
+  background: #2980b9;
+}
+
+.timeline-dates {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+
+.timeline-date {
+  font-size: 0.8em;
+  color: #7f8c8d;
+  transform: rotate(-45deg);
+  transform-origin: top left;
+}
+
+@media (max-width: 768px) {
+  .timeline-wrapper {
+    overflow-x: auto;
+    padding: 2rem 1rem;
+  }
+  
+  .timeline-track {
+    min-width: 800px;
+  }
+  
+  .point-info {
+    max-width: 250px;
+  }
+}

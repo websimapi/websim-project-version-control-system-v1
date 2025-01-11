@@ -1,0 +1,92 @@
+/* Inherit v14 styles */
+@import url('../v14/styles.css');
+
+/* V15 specific styles */
+.version-navigation {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.version-nav-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.version-nav-btn {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  background: #f8f9fa;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.version-nav-btn:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.version-nav-btn.active {
+  background: #3498db;
+  color: white;
+}
+
+.version-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(44, 62, 80, 0.95);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85em;
+  width: max-content;
+  max-width: 300px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.version-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(44, 62, 80, 0.95);
+}
+
+.version-nav-btn:hover .version-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+.version-nav-btn .version-label {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .version-navigation {
+    padding: 1rem;
+  }
+  
+  .version-nav-container {
+    justify-content: center;
+  }
+  
+  .version-tooltip {
+    display: none;
+  }
+}
