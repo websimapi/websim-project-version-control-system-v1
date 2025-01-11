@@ -2,10 +2,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Version Control System - V13</title>
-  <link rel="stylesheet" href="v13/styles.css">
+  <title>Project Version Control System - V14</title>
+  <link rel="stylesheet" href="v14/styles.css">
 </head>
 <body>
+  <div class="version-switch-progress">
+    <div class="progress-bar" style="width: 0%"></div>
+  </div>
+
   <div class="version-container">
     <h1 class="version-header">Project Version Control System</h1>
     
@@ -21,42 +25,36 @@
         <button class="command-btn" data-command="!timeline">Timeline</button>
         <button class="command-btn" data-command="!metrics">Metrics</button>
         <button class="command-btn" data-command="!storage">Storage Info</button>
-        <button class="command-btn" data-command="!switch v13">Switch to Latest</button>
+        <button class="command-btn" data-command="!loaded">Show Loaded Files</button>
         <button class="command-btn" data-command="!help">Help</button>
       </div>
     </div>
 
     <div class="command-center">
-      <input type="text" id="command-input" placeholder="Enter command (e.g., !list, !detailed, !timeline)">
+      <input type="text" id="command-input" placeholder="Enter command (e.g., !list, !switch v5, !timeline)">
       <button id="execute-command">Execute</button>
     </div>
+    
     <div id="version-display" class="version-display">
       <!-- Version information will be displayed here -->
     </div>
+    
     <div id="command-history" class="command-history">
       <h3>Command History</h3>
       <ul id="history-list"></ul>
     </div>
   </div>
 
-  <!-- Load scripts in correct order -->
+  <!-- Load initial version control system -->
   <script src="version_control.js"></script>
+  
+  <!-- Load version 1 by default -->
   <script src="v1/main.js"></script>
-  <script src="v2/main.js"></script>
-  <script src="v3/main.js"></script>
-  <script src="v4/main.js"></script>
-  <script src="v5/main.js"></script>
-  <script src="v6/main.js"></script>
-  <script src="v7/main.js"></script>
-  <script src="v8/main.js"></script>
-  <script src="v9/main.js"></script>
-  <script src="v10/main.js"></script>
-  <script src="v11/main.js"></script>
-  <script src="v12/main.js"></script>
-  <script src="v13/main.js"></script>
+  
+  <!-- Initialize latest version -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      window.project = new ProjectV13();
+      window.project = new ProjectV14();
       project.initialize();
     });
   </script>
