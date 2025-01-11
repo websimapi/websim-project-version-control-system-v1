@@ -1,0 +1,30 @@
+/* Inherit v4 styles */
+@import url('../v4/styles.css');
+
+/* V5 specific styles */
+.merge-result {
+  background: #f1f8ff;
+  padding: 1rem;
+  border-radius: 4px;
+  border-left: 4px solid #2ecc71;
+  margin-top: 1rem;
+}
+
+.merge-result h4 {
+  color: #2ecc71;
+  margin: 0.5rem 0;
+}
+
+.merge-result ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.merge-result ul li {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #e8f4ff;
+}
+
+.merge-result ul li:last-child {
+  border-bottom: none;
+}

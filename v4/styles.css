@@ -1,0 +1,28 @@
+/* Inherit v3 styles */
+@import url('../v3/styles.css');
+
+/* V4 specific styles */
+.version-tree {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.tree-node {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-left: 3px solid #3498db;
+  background: white;
+}
+
+.version {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.deps {
+  margin-left: 1rem;
+  color: #7f8c8d;
+  font-style: italic;
+}

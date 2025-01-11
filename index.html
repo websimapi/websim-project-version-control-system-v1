@@ -2,28 +2,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Version Control System - V2</title>
-  <link rel="stylesheet" href="v2/styles.css">
+  <title>Project Version Control System - V5</title>
+  <link rel="stylesheet" href="v5/styles.css">
 </head>
 <body>
   <div class="version-container">
     <h1 class="version-header">Project Version Control System</h1>
     
-    <!-- Command Quick Access Panel -->
     <div class="command-quick-access">
       <h3>Quick Commands</h3>
       <div class="command-buttons">
         <button class="command-btn" data-command="!list">List Versions</button>
         <button class="command-btn" data-command="!info v1">Info V1</button>
         <button class="command-btn" data-command="!info v2">Info V2</button>
-        <button class="command-btn" data-command="!diff v1 v2">Compare V1 & V2</button>
+        <button class="command-btn" data-command="!info v3">Info V3</button>
+        <button class="command-btn" data-command="!info v4">Info V4</button>
+        <button class="command-btn" data-command="!info v5">Info V5</button>
+        <button class="command-btn" data-command="!tree">Show Tree</button>
         <button class="command-btn" data-command="!help">Help</button>
-        <button class="command-btn" data-command="!merge v1 v2">Merge V1 & V2</button>
+        <button class="command-btn" data-command="!merge v4 v5">Merge Latest</button>
       </div>
     </div>
 
     <div class="command-center">
-      <input type="text" id="command-input" placeholder="Enter command (e.g., !list, !info v1, !diff v1 v2)">
+      <input type="text" id="command-input" placeholder="Enter command (e.g., !list, !info v5, !merge v4 v5)">
       <button id="execute-command">Execute</button>
     </div>
     <div id="version-display" class="version-display">
@@ -37,11 +39,14 @@
 
   <!-- Load scripts in correct order -->
   <script src="version_control.js"></script>
+  <script src="v1/main.js"></script>
   <script src="v2/main.js"></script>
+  <script src="v3/main.js"></script>
+  <script src="v4/main.js"></script>
+  <script src="v5/main.js"></script>
   <script>
-    // Initialize after all scripts are loaded
     document.addEventListener('DOMContentLoaded', () => {
-      const project = new ProjectV2();
+      const project = new ProjectV5();
       project.initialize();
     });
   </script>

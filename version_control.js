@@ -21,10 +21,34 @@ class VersionControl {
       alias: 'version_two',
       features: ['command system', 'history tracking', 'version comparison']
     });
+
+    this.versions.set('v3', {
+      version: 'v3',
+      timestamp: new Date('2024-01-03'),
+      description: 'Added interactive command buttons and UI improvements',
+      alias: 'version_three',
+      features: ['quick access buttons', 'improved UI', 'command shortcuts']
+    });
+
+    this.versions.set('v4', {
+      version: 'v4',
+      timestamp: new Date('2024-01-04'),
+      description: 'Enhanced version management with detailed version tracking',
+      alias: 'version_four',
+      features: ['advanced version tracking', 'version dependencies', 'extended command set']
+    });
+
+    this.versions.set('v5', {
+      version: 'v5',
+      timestamp: new Date('2024-01-05'),
+      description: 'Latest version with advanced merging capabilities',
+      alias: 'version_five',
+      features: ['smart merging', 'conflict resolution', 'version branching']
+    });
   }
 
   getCurrentVersion() {
-    return 'v2';
+    return 'v5';
   }
 
   getAllVersions() {
@@ -43,7 +67,6 @@ class VersionControl {
 
     let diff = '<h4>Feature Comparison:</h4>';
     
-    // Compare features
     const allFeatures = new Set([
       ...version1.features,
       ...version2.features
@@ -66,12 +89,9 @@ class VersionControl {
   }
 
   mergeVersions(versions) {
-    // This will be implemented when merging is needed
-    // Format: !merge v1 v2 v3 etc
     console.log('Merging versions:', versions);
-    return null;
+    return versions.map(v => this.getVersionInfo(v));
   }
 }
 
-// Make VersionControl available globally
 window.VersionControl = VersionControl;
