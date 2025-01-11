@@ -2,8 +2,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Version Control System - V16</title>
-  <link rel="stylesheet" href="v16/styles.css">
+  <title>Project Version Control System - V17</title>
+  <link rel="stylesheet" href="v17/styles.css">
 </head>
 <body>
   <div class="version-switch-progress">
@@ -65,13 +65,14 @@
   <script src="v14/main.js"></script>
   <script src="v15/main.js"></script>
   <script src="v16/main.js"></script>
+  <script src="v17/main.js"></script>
   
   <!-- Initialize latest version -->
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // Ensure all scripts are loaded before initializing
       try {
-        window.project = new ProjectV16();
+        window.project = new ProjectV17();
         await project.initialize();
         console.log('Version control system initialized successfully');
       } catch (error) {
