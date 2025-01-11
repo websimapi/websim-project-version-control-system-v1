@@ -33,8 +33,10 @@ class ProjectV22 extends ProjectV21 {
   }
 
   initializeMainWindow() {
+    // Create the UI structure first
     this.createVersionUI();
-    this.setupEventHandlers();
+    
+    // Then initialize other components in order
     this.initializeTimeline();
     this.createMainFrame();
     
@@ -42,15 +44,9 @@ class ProjectV22 extends ProjectV21 {
     if (!localStorage.getItem('versionTimestamps')) {
       this.initializeVersionTimestamps();
     }
-  }
-
-  initializeVersionTimestamps() {
-    const now = new Date();
-    const timestamps = {};
-    this.branchData.main.forEach(version => {
-      timestamps[version] = now.toISOString();
-    });
-    localStorage.setItem('versionTimestamps', JSON.stringify(timestamps));
+    
+    // Setup event handlers last after DOM is ready
+    this.setupEventHandlers();
   }
 
   createVersionUI() {
@@ -65,20 +61,61 @@ class ProjectV22 extends ProjectV21 {
       <div id="main-frame-container"></div>
     `;
     document.body.appendChild(container);
+    
+    // Create navigation UI
+    this.createNavigation();
+  }
+
+  createNavigation() {
+    const nav = document.querySelector('.version-nav');
+    if (nav) {
+      nav.innerHTML = this.branchData.main.map(version => `
+        <button class="nav-button ${version === this.currentActiveVersion ? 'active' : ''}"
+                data-version="${version}">
+          ${version}
+        </button>
+      `).join('');
+    }
   }
 
   createMainFrame() {
     const container = document.getElementById('main-frame-container');
     if (!container) return;
 
-    container.innerHTML = ''; // Clear existing content
-    
     this.mainFrame = document.createElement('iframe');
     this.mainFrame.className = 'version-frame';
     container.appendChild(this.mainFrame);
     
     // Load initial version
     this.switchVersion(this.currentActiveVersion);
+  }
+
+  initializeVersionTimestamps() {
+    const now = new Date();
+    const timestamps = {};
+    this.branchData.main.forEach(version => {
+      timestamps[version] = now.toISOString();
+    });
+    localStorage.setItem('versionTimestamps', JSON.stringify(timestamps));
+  }
+
+  setupEventHandlers() {
+    // Listen for navigation clicks
+    document.querySelector('.version-nav')?.addEventListener('click', async (e) => {
+      if (e.target.matches('.nav-button')) {
+        const version = e.target.dataset.version;
+        await this.switchVersion(version);
+      }
+    });
+
+    // Listen for timeline clicks
+    document.querySelector('.timeline-container')?.addEventListener('click', async (e) => {
+      const point = e.target.closest('.timeline-point');
+      if (point) {
+        const version = point.dataset.version;
+        await this.switchVersion(version);
+      }
+    });
   }
 
   async switchVersion(version) {
@@ -90,25 +127,26 @@ class ProjectV22 extends ProjectV21 {
 
     try {
       // Clear existing frame content
-      if (this.mainFrame) {
-        this.mainFrame.src = 'about:blank';
-        await new Promise(resolve => setTimeout(resolve, 100)); // Brief pause
+      const frame = this.mainFrame;
+      if (frame) {
+        frame.src = 'about:blank';
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
 
       // Load new version
-      this.mainFrame.src = this.getVersionURL(version);
+      frame.src = this.getVersionURL(version);
       
       await new Promise((resolve, reject) => {
         const timeout = setTimeout(() => reject(new Error('Version load timeout')), 10000);
         
-        const handleLoad = async () => {
+        const handleLoad = () => {
           clearTimeout(timeout);
           this.currentActiveVersion = version;
           this.updateUI(version);
           resolve();
         };
 
-        this.mainFrame.onload = handleLoad;
+        frame.onload = handleLoad;
       });
 
     } catch (error) {
@@ -130,33 +168,6 @@ class ProjectV22 extends ProjectV21 {
       </div>
     `;
     return overlay;
-  }
-
-  setupEventHandlers() {
-    // Handle version navigation clicks
-    document.addEventListener('click', async (e) => {
-      if (e.target.matches('.nav-button')) {
-        const version = e.target.dataset.version;
-        await this.switchVersion(version);
-      }
-      
-      if (e.target.closest('.timeline-point')) {
-        const version = e.target.closest('.timeline-point').dataset.version;
-        await this.switchVersion(version);
-      }
-    });
-  }
-
-  updateUI(version) {
-    // Update navigation buttons
-    document.querySelectorAll('.nav-button').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.version === version);
-    });
-    
-    // Update timeline points
-    document.querySelectorAll('.timeline-point').forEach(point => {
-      point.classList.toggle('active', point.dataset.version === version);
-    });
   }
 
   showError(message) {
@@ -224,6 +235,19 @@ class ProjectV22 extends ProjectV21 {
     timelineContainer.appendChild(track);
     nav.appendChild(timelineContainer);
   }
+
+  updateUI(version) {
+    // Update navigation buttons
+    document.querySelectorAll('.nav-button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.version === version);
+    });
+    
+    // Update timeline points
+    document.querySelectorAll('.timeline-point').forEach(point => {
+      point.classList.toggle('active', point.dataset.version === version);
+    });
+  }
+
 }
 
 // Initialize based on context
