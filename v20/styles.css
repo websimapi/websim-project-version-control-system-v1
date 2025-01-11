@@ -1,0 +1,59 @@
+/* Inherit v19 styles */
+@import url('../v19/styles.css');
+
+/* V20 specific styles */
+.version-timeline-status {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.version-frame-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(231, 76, 60, 0.95);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 200;
+}
+
+.timeline-loading {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #3498db;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: timeline-spin 1s linear infinite;
+}
+
+@keyframes timeline-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.version-frame.loading {
+  opacity: 0.5;
+}
+
+.version-timeline-view {
+  position: relative;
+}
+
+.timeline-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
