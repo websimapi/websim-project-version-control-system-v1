@@ -2,8 +2,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Version Control System - V5</title>
-  <link rel="stylesheet" href="v5/styles.css">
+  <title>Project Version Control System - V6</title>
+  <link rel="stylesheet" href="v6/styles.css">
 </head>
 <body>
   <div class="version-container">
@@ -13,19 +13,17 @@
       <h3>Quick Commands</h3>
       <div class="command-buttons">
         <button class="command-btn" data-command="!list">List Versions</button>
-        <button class="command-btn" data-command="!info v1">Info V1</button>
-        <button class="command-btn" data-command="!info v2">Info V2</button>
-        <button class="command-btn" data-command="!info v3">Info V3</button>
-        <button class="command-btn" data-command="!info v4">Info V4</button>
-        <button class="command-btn" data-command="!info v5">Info V5</button>
         <button class="command-btn" data-command="!tree">Show Tree</button>
+        <button class="command-btn" data-command="!branches">Show Branches</button>
+        <button class="command-btn" data-command="!visual">Visual Branches</button>
+        <button class="command-btn" data-command="!switch v6">Switch to V6</button>
+        <button class="command-btn" data-command="!merge v5 v6">Merge Latest</button>
         <button class="command-btn" data-command="!help">Help</button>
-        <button class="command-btn" data-command="!merge v4 v5">Merge Latest</button>
       </div>
     </div>
 
     <div class="command-center">
-      <input type="text" id="command-input" placeholder="Enter command (e.g., !list, !info v5, !merge v4 v5)">
+      <input type="text" id="command-input" placeholder="Enter command (e.g., !list, !visual, !switch v6)">
       <button id="execute-command">Execute</button>
     </div>
     <div id="version-display" class="version-display">
@@ -44,9 +42,10 @@
   <script src="v3/main.js"></script>
   <script src="v4/main.js"></script>
   <script src="v5/main.js"></script>
+  <script src="v6/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const project = new ProjectV5();
+      const project = new ProjectV6();
       project.initialize();
     });
   </script>

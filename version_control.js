@@ -45,10 +45,18 @@ class VersionControl {
       alias: 'version_five',
       features: ['smart merging', 'conflict resolution', 'version branching']
     });
+
+    this.versions.set('v6', {
+      version: 'v6',
+      timestamp: new Date('2024-01-06'),
+      description: 'Advanced branch management with visual representation',
+      alias: 'version_six',
+      features: ['branch visualization', 'version switching', 'interactive branch management']
+    });
   }
 
   getCurrentVersion() {
-    return 'v5';
+    return 'v6';
   }
 
   getAllVersions() {
@@ -95,3 +103,6 @@ class VersionControl {
 }
 
 window.VersionControl = VersionControl;
+```
+
+Note: I have updated the `getCurrentVersion()` method to return `v6` as the current version, since the plan adds `v6` to the versions.
