@@ -4,6 +4,7 @@ class ProjectV21 extends ProjectV20 {
     this.version = 'v21';
     this.currentActiveVersion = 'v21';
     this.mainFrame = null;
+    this.isInitialLoad = true;
   }
 
   initializeBranchData() {
@@ -20,6 +21,24 @@ class ProjectV21 extends ProjectV20 {
   initialize() {
     super.initialize();
     this.setupSingleIframeSystem();
+
+    // Handle messages from child frames
+    window.addEventListener('message', this.handleFrameMessage.bind(this));
+  }
+
+  handleFrameMessage(event) {
+    const { type, version } = event.data;
+    switch (type) {
+      case 'VERSION_LOADED':
+        this.handleVersionLoaded(version);
+        break;
+      case 'VERSION_ERROR':
+        this.handleVersionError(version, event.data.error);
+        break;
+      case 'FRAME_READY':
+        this.handleFrameReady(version);
+        break;
+    }
   }
 
   setupSingleIframeSystem() {
@@ -58,10 +77,18 @@ class ProjectV21 extends ProjectV20 {
   }
 
   initializeMainFrame() {
+    const container = document.getElementById('main-frame-container');
     if (!this.mainFrame) {
       this.mainFrame = document.createElement('iframe');
       this.mainFrame.className = 'version-frame';
-      document.getElementById('main-frame-container').appendChild(this.mainFrame);
+      
+      // Set initial version if this is the first load
+      if (this.isInitialLoad) {
+        this.mainFrame.src = this.getVersionURL(this.currentActiveVersion);
+        this.isInitialLoad = false;
+      }
+      
+      container.appendChild(this.mainFrame);
     }
   }
 
@@ -73,7 +100,7 @@ class ProjectV21 extends ProjectV20 {
     }
 
     const loadingOverlay = this.createLoadingOverlay();
-    document.querySelector('.version-container').appendChild(loadingOverlay);
+    document.body.appendChild(loadingOverlay);
 
     try {
       await this.loadVersionInFrame(version);
@@ -83,6 +110,7 @@ class ProjectV21 extends ProjectV20 {
     } catch (error) {
       this.showToast(`Error switching to version ${version}: ${error.message}`, 'error');
       console.error('Version switch error:', error);
+      this.handleVersionError(version, error);
     } finally {
       loadingOverlay.remove();
     }
@@ -94,42 +122,81 @@ class ProjectV21 extends ProjectV20 {
     statusEl.textContent = `Loading ${version}...`;
 
     try {
-      // Set frame src with version parameter
-      frame.src = this.getVersionURL(version);
-
-      // Wait for frame to load
       await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('Frame load timeout')), 10000);
+        const timeoutId = setTimeout(() => {
+          reject(new Error('Frame load timeout'));
+        }, 10000);
 
+        const handleLoad = () => {
+          clearTimeout(timeoutId);
+          resolve();
+        };
+
+        // Set up message handler for this specific load
         const handleMessage = (event) => {
           if (event.source === frame.contentWindow && event.data.type === 'VERSION_LOADED') {
-            clearTimeout(timeout);
             window.removeEventListener('message', handleMessage);
+            clearTimeout(timeoutId);
             resolve();
           }
         };
 
         window.addEventListener('message', handleMessage);
 
-        frame.onerror = () => {
-          clearTimeout(timeout);
-          window.removeEventListener('message', handleMessage);
-          reject(new Error('Frame failed to load'));
-        };
+        // Set the source of the frame
+        frame.onload = handleLoad;
+        frame.src = this.getVersionURL(version);
       });
 
       statusEl.textContent = `Running ${version}`;
-
+      
     } catch (error) {
       statusEl.textContent = 'Error';
       throw error;
     }
   }
 
+  getVersionURL(version) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('version', version);
+    // Add a timestamp to prevent caching
+    url.searchParams.set('t', Date.now());
+    return url.toString();
+  }
+
+  handleVersionLoaded(version) {
+    const statusEl = document.querySelector('.frame-load-status');
+    statusEl.textContent = `Running ${version}`;
+    this.showToast(`Version ${version} loaded successfully`);
+  }
+
+  handleVersionError(version, error) {
+    const statusEl = document.querySelector('.frame-load-status');
+    statusEl.textContent = 'Error';
+    console.error(`Error in version ${version}:`, error);
+    this.showError(`Failed to load version ${version}: ${error}`);
+  }
+
+  handleFrameReady(version) {
+    console.log(`Frame ready for version ${version}`);
+  }
+
   refreshFrame() {
     if (this.mainFrame) {
-      this.mainFrame.src = this.mainFrame.src;
+      this.mainFrame.src = this.getVersionURL(this.currentActiveVersion);
     }
+  }
+
+  showError(message) {
+    const container = document.getElementById('main-frame-container');
+    const errorEl = document.createElement('div');
+    errorEl.className = 'frame-error';
+    errorEl.textContent = message;
+    container.appendChild(errorEl);
+
+    setTimeout(() => {
+      errorEl.remove();
+    }, 5000);
   }
 
   createLoadingOverlay() {
@@ -143,23 +210,9 @@ class ProjectV21 extends ProjectV20 {
     `;
     return overlay;
   }
-
-  showHelp() {
-    super.showHelp();
-    const display = document.getElementById('version-display');
-    display.innerHTML += `
-      <h4>Version 21 Improvements</h4>
-      <ul>
-        <li>Single iframe system for better version isolation</li>
-        <li>Improved version switching reliability</li>
-        <li>Enhanced loading states and error handling</li>
-        <li>Streamlined frame management</li>
-      </ul>
-    `;
-  }
 }
 
-// Initialize version control system
+// Initialize version control system for non-iframe context
 if (!window.location.search.includes('version=')) {
   document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -173,6 +226,32 @@ if (!window.location.search.includes('version=')) {
           Error initializing version control system: ${error.message}
         </div>
       `;
+    }
+  });
+}
+
+// Handle iframe initialization
+if (window.location.search.includes('version=')) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const version = urlParams.get('version');
+  const versionNumber = parseInt(version.replace('v', ''));
+  
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const VersionClass = window[`ProjectV${versionNumber}`];
+      if (VersionClass) {
+        window.project = new VersionClass();
+        await project.initialize();
+        window.parent.postMessage({ type: 'VERSION_LOADED', version }, '*');
+      } else {
+        throw new Error(`Version class not found: ProjectV${versionNumber}`);
+      }
+    } catch (error) {
+      window.parent.postMessage({ 
+        type: 'VERSION_ERROR', 
+        version,
+        error: error.message 
+      }, '*');
     }
   });
 }
