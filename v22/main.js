@@ -7,40 +7,36 @@ class ProjectV22 extends ProjectV21 {
   }
 
   initialize() {
-    // Create main UI first
-    this.createMainUI();
-    
-    // Then setup frame and events
-    this.setupMainFrame();
-    this.setupEventListeners();
-    
-    // Finally, load initial version
-    this.loadInitialVersion();
+    if (!this.isInIframe()) {
+      // Create main UI only in parent window
+      this.createMainUI();
+      this.setupMainFrame();
+      this.setupEventListeners();
+      this.loadInitialVersion();
+    } else {
+      // In iframe, just setup version functionality
+      super.initialize();
+    }
   }
 
   createMainUI() {
-    const container = document.createElement('div');
-    container.className = 'version-container';
-    container.innerHTML = `
-      <h1 class="version-header">Version Control System</h1>
-      <div class="version-nav"></div>
-      <div class="frame-container">
-        <div class="frame-toolbar">
-          <div class="frame-status">
-            <span class="current-version">Current: ${this.currentActiveVersion}</span>
-            <span class="frame-state">Ready</span>
+    document.body.innerHTML = `
+      <div class="version-container">
+        <h1 class="version-header">Version Control System</h1>
+        <div class="version-nav"></div>
+        <div class="frame-container">
+          <div class="frame-toolbar">
+            <div class="frame-status">
+              <span class="current-version">Current: ${this.currentActiveVersion}</span>
+              <span class="frame-state">Ready</span>
+            </div>
+            <button class="refresh-btn">Refresh</button>
           </div>
-          <button class="refresh-btn">Refresh</button>
+          <div id="main-frame-container"></div>
         </div>
-        <div id="main-frame-container"></div>
       </div>
     `;
     
-    // Clear existing content and add new UI
-    document.body.innerHTML = '';
-    document.body.appendChild(container);
-    
-    // Create timeline
     this.createTimeline();
   }
 
@@ -85,24 +81,23 @@ class ProjectV22 extends ProjectV21 {
   }
 
   setupEventListeners() {
-    // Timeline point clicks
     document.addEventListener('click', async (e) => {
       const point = e.target.closest('.timeline-point');
-      if (point) {
+      if (point && !this.loadingVersion) {
         const version = point.dataset.version;
         await this.switchVersion(version);
       }
-    });
 
-    // Refresh button
-    const refreshBtn = document.querySelector('.refresh-btn');
-    if (refreshBtn) {
-      refreshBtn.addEventListener('click', () => this.refreshFrame());
-    }
+      if (e.target.classList.contains('refresh-btn')) {
+        this.refreshFrame();
+      }
+    });
   }
 
   loadInitialVersion() {
-    this.switchVersion(this.currentActiveVersion);
+    if (this.mainFrame) {
+      this.switchVersion(this.currentActiveVersion);
+    }
   }
 
   async switchVersion(version) {
@@ -113,24 +108,9 @@ class ProjectV22 extends ProjectV21 {
     document.body.appendChild(overlay);
 
     try {
-      // Clear current frame
-      this.mainFrame.src = 'about:blank';
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Load new version
-      this.mainFrame.src = this.getVersionURL(version);
-      
-      await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('Version load timeout')), 10000);
-        
-        this.mainFrame.onload = () => {
-          clearTimeout(timeout);
-          this.currentActiveVersion = version;
-          this.updateUI(version);
-          resolve();
-        };
-      });
-
+      await this.loadVersionInFrame(version);
+      this.currentActiveVersion = version;
+      this.updateUI(version);
     } catch (error) {
       console.error('Version switch error:', error);
       this.showError(`Failed to load version ${version}: ${error.message}`);
@@ -138,6 +118,24 @@ class ProjectV22 extends ProjectV21 {
       overlay.remove();
       this.loadingVersion = false;
     }
+  }
+
+  async loadVersionInFrame(version) {
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => reject(new Error('Load timeout')), 10000);
+      
+      this.mainFrame.onload = () => {
+        clearTimeout(timeoutId);
+        resolve();
+      };
+      
+      this.mainFrame.onerror = () => {
+        clearTimeout(timeoutId);
+        reject(new Error('Frame load failed'));
+      };
+
+      this.mainFrame.src = this.getVersionURL(version);
+    });
   }
 
   updateUI(version) {
@@ -172,7 +170,7 @@ class ProjectV22 extends ProjectV21 {
   getVersionURL(version) {
     const url = new URL(window.location.href);
     url.searchParams.set('version', version);
-    url.searchParams.set('t', Date.now()); // Cache busting
+    url.searchParams.set('t', Date.now());
     return url.toString();
   }
 
@@ -186,8 +184,8 @@ class ProjectV22 extends ProjectV21 {
   }
 
   refreshFrame() {
-    if (this.mainFrame) {
-      this.mainFrame.src = this.mainFrame.src;
+    if (this.mainFrame && !this.loadingVersion) {
+      this.mainFrame.src = this.getVersionURL(this.currentActiveVersion);
     }
   }
 
@@ -203,38 +201,35 @@ class ProjectV22 extends ProjectV21 {
     };
   }
 
-  initializeVersionTimestamps() {
-    const now = new Date();
-    const timestamps = {};
-    this.branchData.main.forEach(version => {
-      timestamps[version] = now.toISOString();
-    });
-    localStorage.setItem('versionTimestamps', JSON.stringify(timestamps));
-  }
-
-  // Initialize based on context
   isInIframe() {
-    return window !== window.parent;
+    try {
+      return window !== window.parent;
+    } catch {
+      return true;
+    }
   }
-
 }
 
-// Initialize based on context
-if (!window.location.search.includes('version=')) {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.project = new ProjectV22();
-    project.initialize();
-  });
-} else {
-  document.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const version = urlParams.get('version');
-    const versionNumber = parseInt(version.replace('v', ''));
-    
-    const VersionClass = window[`ProjectV${versionNumber}`];
-    if (VersionClass) {
-      window.project = new VersionClass();
+// Handle initialization based on context
+if (typeof window !== 'undefined') {
+  if (!window.location.search.includes('version=')) {
+    // Main window initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      window.project = new ProjectV22();
       project.initialize();
-    }
-  });
+    });
+  } else {
+    // Frame initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const version = urlParams.get('version');
+      const versionNumber = parseInt(version.replace('v', ''));
+      
+      const VersionClass = window[`ProjectV${versionNumber}`];
+      if (VersionClass) {
+        window.project = new VersionClass();
+        project.initialize();
+      }
+    });
+  }
 }
