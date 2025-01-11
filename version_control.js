@@ -73,4 +73,5 @@ class VersionControl {
   }
 }
 
-module.exports = VersionControl;
+// Make VersionControl available globally
+window.VersionControl = VersionControl;
