@@ -5,6 +5,7 @@ class ProjectV7 extends ProjectV6 {
     this.currentActiveVersion = 'v7';
     this.branchData = this.initializeBranchData();
     this.mergeLogs = [];
+    this.toastTimeout = null;
   }
 
   initializeBranchData() {
@@ -18,6 +19,8 @@ class ProjectV7 extends ProjectV6 {
 
   initialize() {
     super.initialize();
+    this.setupKeyboardShortcuts();
+    this.showToast('Version control system initialized');
     this.enhanceBranchVisualization();
     this.setupAdvancedMerging();
   }
@@ -96,6 +99,22 @@ class ProjectV7 extends ProjectV6 {
   }
 
   drawEnhancedBranches(ctx) {
+    // Add grid lines
+    ctx.strokeStyle = '#f0f2f5';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < ctx.canvas.width; i += 50) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, ctx.canvas.height);
+      ctx.stroke();
+    }
+    for (let i = 0; i < ctx.canvas.height; i += 50) {
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(ctx.canvas.width, i);
+      ctx.stroke();
+    }
+
     const yOffset = 80;
     const xStart = 80;
     let currentY = yOffset;
@@ -270,14 +289,116 @@ class ProjectV7 extends ProjectV6 {
     `);
   }
 
+  showToast(message, type = 'success') {
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    this.toastTimeout = setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
+
+  showLoading() {
+    const loader = document.createElement('div');
+    loader.className = 'loading-indicator';
+    return loader;
+  }
+
+  async switchVersion(version) {
+    const display = document.getElementById('version-display');
+    display.appendChild(this.showLoading());
+    
+    // Simulate loading for smoother UX
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const versionInfo = this.versionControl.getVersionInfo(version);
+    if (versionInfo) {
+      this.currentActiveVersion = version;
+      this.showToast(`Successfully switched to ${version}`);
+      this.displayMessage(`
+        <div class="switch-notification">
+          <h3>Switched to ${version}</h3>
+          <p>Now running: ${versionInfo.description}</p>
+          <div class="active-features">
+            ${versionInfo.features.map(f => 
+              `<span class="feature-tag">${f}</span>`
+            ).join('')}
+          </div>
+          <div class="version-metrics">
+            <p>Total Features: ${versionInfo.features.length}</p>
+            <p>Created: ${versionInfo.timestamp.toLocaleDateString()}</p>
+          </div>
+        </div>
+      `);
+    } else {
+      this.showToast(`Version ${version} not found`, 'error');
+    }
+  }
+
+  handleMerge(versions) {
+    if (versions.length < 2) {
+      this.showToast('Merge requires at least 2 versions', 'error');
+      return;
+    }
+
+    const mergeResult = this.versionControl.mergeVersions(versions);
+    if (mergeResult) {
+      const mergeId = Date.now();
+      this.mergeLogs.push({
+        id: mergeId,
+        versions: versions,
+        timestamp: new Date(),
+        features: this.getCombinedFeatures(versions),
+        success: true
+      });
+
+      this.showToast(`Successfully merged ${versions.join(', ')}`);
+      this.displayMergeResult(mergeId);
+    }
+  }
+
+  setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        switch(e.key.toLowerCase()) {
+          case 'b':
+            e.preventDefault();
+            this.executeCommandByShortcut('!branches');
+            break;
+          case 'd':
+            e.preventDefault();
+            this.executeCommandByShortcut('!detailed');
+            break;
+          case 'h':
+            e.preventDefault();
+            this.executeCommandByShortcut('!help');
+            break;
+        }
+      }
+    });
+  }
+
   showHelp() {
     super.showHelp();
     const display = document.getElementById('version-display');
     display.innerHTML += `
-      <h4>Enhanced Branch Commands</h4>
+      <h4>Keyboard Shortcuts</h4>
       <ul>
-        <li>!detailed - Show detailed branch visualization with timeline</li>
-        <li>!history - Display merge history with feature tracking</li>
+        <li>Ctrl/Cmd + B: Show branches</li>
+        <li>Ctrl/Cmd + D: Show detailed view</li>
+        <li>Ctrl/Cmd + H: Show help</li>
+      </ul>
+      <h4>Tips</h4>
+      <ul>
+        <li>Click on version nodes in the visualization to switch versions</li>
+        <li>Hover over branch metrics for more details</li>
+        <li>Use the command input for custom commands</li>
       </ul>
     `;
   }
