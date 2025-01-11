@@ -1,0 +1,154 @@
+/* Inherit v7 styles */
+@import url('../v7/styles.css');
+
+/* V11 specific styles */
+.version-timeline-view {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-container {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline-item {
+  display: flex;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.timeline-version {
+  min-width: 150px;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-right: 2rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.timeline-version.active {
+  background: #3498db;
+  color: white;
+}
+
+.timeline-version::after {
+  content: '';
+  position: absolute;
+  right: -1rem;
+  top: 50%;
+  width: 1rem;
+  height: 2px;
+  background: #e9ecef;
+}
+
+.timeline-date {
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+.timeline-content {
+  flex: 1;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.timeline-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.version-metrics-view {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.metrics-section {
+  margin: 2rem 0;
+}
+
+.feature-graph-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  height: 250px;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.graph-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bar {
+  width: 30px;
+  background: linear-gradient(to top, #3498db, #2980b9);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease;
+}
+
+.bar-label {
+  font-size: 0.8em;
+  color: #7f8c8d;
+  transform: rotate(-45deg);
+}
+
+.version-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  color: #7f8c8d;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .timeline-item {
+    flex-direction: column;
+  }
+
+  .timeline-version {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  .timeline-version::after {
+    display: none;
+  }
+
+  .version-stats {
+    grid-template-columns: 1fr;
+  }
+}
