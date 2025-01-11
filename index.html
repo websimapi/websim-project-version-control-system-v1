@@ -6,10 +6,10 @@
   <link rel="stylesheet" href="v23/styles.css">
 </head>
 <body>
-  <!-- Version control script -->
+  <!-- Core system scripts -->
   <script src="version_control.js"></script>
   
-  <!-- Load version scripts -->
+  <!-- All version scripts - loaded but usage controlled by version switcher -->
   <script src="v1/main.js"></script>
   <script src="v2/main.js"></script>
   <script src="v3/main.js"></script>
@@ -34,23 +34,32 @@
   <script src="v23/main.js"></script>
 
   <script>
-    // Initialize based on context
+    // Initialize the version control system
     document.addEventListener('DOMContentLoaded', async () => {
-      // Check if we're in an iframe
-      if (window.location.search.includes('version=')) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const version = urlParams.get('version');
-        const versionNumber = parseInt(version.replace('v', ''));
-        
-        const VersionClass = window[`ProjectV${versionNumber}`];
-        if (VersionClass) {
-          window.project = new VersionClass();
+      try {
+        // Check if we're in a version frame
+        if (window.location.search.includes('version=')) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const version = urlParams.get('version');
+          const versionNumber = parseInt(version.replace('v', ''));
+          
+          const VersionClass = window[`ProjectV${versionNumber}`];
+          if (VersionClass) {
+            window.project = new VersionClass();
+            await project.initialize();
+          }
+        } else {
+          // Main window initialization 
+          window.project = new ProjectV23();
           await project.initialize();
         }
-      } else {
-        // Main window initialization
-        window.project = new ProjectV23();
-        await project.initialize();
+      } catch (error) {
+        console.error('Initialization error:', error);
+        // Show error in UI
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = `Error initializing: ${error.message}`;
+        document.body.appendChild(errorDiv);
       }
     });
   </script>
