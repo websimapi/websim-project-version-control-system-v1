@@ -9,12 +9,43 @@ class ProjectV23 {
   }
 
   async initialize() {
+    // Create initial UI structure
+    this.createInitialUI();
+    
+    // Initialize data
     await this.initializeVersionData();
-    this.createUI();
+    
+    // Setup timeline after data is loaded
+    this.createTimeline();
+    
+    // Setup event listeners
     this.setupEventListeners();
     
-    // Load initial version
-    await this.switchVersion(this.currentVersion);
+    // Create main frame
+    await this.initializeFrame();
+  }
+
+  createInitialUI() {
+    document.body.innerHTML = `
+      <div class="app-container">
+        <header class="header">
+          <h1>Version Control System</h1>
+        </header>
+        <div class="timeline-container">
+          <div id="timeline"></div>
+        </div>
+        <div class="frame-container">
+          <div class="frame-header">
+            <div class="frame-status">
+              <span class="current-version">Current: ${this.currentVersion}</span>
+              <span class="frame-state">Ready</span>
+            </div>
+            <button class="refresh-button">Refresh</button>
+          </div>
+          <div id="frame-content"></div>
+        </div>
+      </div>
+    `;
   }
 
   async initializeVersionData() {
@@ -31,82 +62,67 @@ class ProjectV23 {
     }
 
     try {
-      // Fetch project data using project ID
       const response = await fetch(`/api/v1/projects/${this.projectId}`);
+      if (!response.ok) throw new Error('Failed to fetch project data');
       const data = await response.json();
       this.projectData = data;
     } catch (error) {
       console.error('Error fetching project data:', error);
+      // Continue with local data if API fails
     }
   }
 
-  createUI() {
-    document.body.innerHTML = `
-      <div class="app-container">
-        <header class="header">
-          <h1>Version Control System</h1>
-        </header>
-        
-        <div class="timeline-container">
-          <div class="timeline">
-            ${this.createTimelineHTML()}
-          </div>
-        </div>
-        
-        <div class="frame-container">
-          <div class="frame-header">
-            <div class="frame-status">
-              <span>Current Version: <strong>${this.currentVersion}</strong></span>
-              <span class="frame-state">Ready</span>
-            </div>
-            <button onclick="project.refreshFrame()">Refresh</button>
-          </div>
-          <div id="frame-content"></div>
-        </div>
-      </div>
-    `;
+  createTimeline() {
+    const timeline = document.getElementById('timeline');
+    if (!timeline) return;
 
-    // Initialize main frame
-    this.initializeFrame();
-  }
-
-  createTimelineHTML() {
     const timestamps = JSON.parse(localStorage.getItem('versionTimestamps'));
-    let html = '<div class="timeline-track">';
-    
-    // Calculate positions for each version
-    const totalVersions = Object.keys(timestamps).length;
-    let index = 0;
-    
-    Object.entries(timestamps).forEach(([version, timestamp]) => {
-      const position = (index / (totalVersions - 1)) * 100;
-      html += `
-        <div class="version-point ${version === this.currentVersion ? 'active' : ''}"
-             style="left: ${position}%"
-             data-version="${version}">
-          <div class="version-label">${version}</div>
-          <div class="version-date">${new Date(timestamp).toLocaleDateString()}</div>
-        </div>
-      `;
-      index++;
+    const versions = Object.keys(timestamps).sort((a, b) => {
+      return parseInt(a.slice(1)) - parseInt(b.slice(1));
     });
-    
-    html += '</div>';
-    return html;
+
+    const track = document.createElement('div');
+    track.className = 'timeline-track';
+
+    versions.forEach((version, index) => {
+      const point = document.createElement('div');
+      point.className = `version-point ${version === this.currentVersion ? 'active' : ''}`;
+      point.dataset.version = version;
+      point.style.left = `${(index / (versions.length - 1)) * 100}%`;
+
+      point.innerHTML = `
+        <div class="version-label">${version}</div>
+        <div class="version-date">${new Date(timestamps[version]).toLocaleDateString()}</div>
+      `;
+
+      track.appendChild(point);
+    });
+
+    timeline.appendChild(track);
   }
 
-  initializeFrame() {
+  async initializeFrame() {
     const container = document.getElementById('frame-content');
+    if (!container) return;
+
     this.mainFrame = document.createElement('iframe');
     this.mainFrame.className = 'version-frame';
+    this.mainFrame.src = this.getVersionURL(this.currentVersion);
     container.appendChild(this.mainFrame);
   }
 
   setupEventListeners() {
+    // Version point clicks
     document.addEventListener('click', async (e) => {
-      if (e.target.closest('.version-point')) {
-        const version = e.target.closest('.version-point').dataset.version;
+      const point = e.target.closest('.version-point');
+      if (point) {
+        const version = point.dataset.version;
         await this.switchVersion(version);
+      }
+
+      // Refresh button
+      if (e.target.closest('.refresh-button')) {
+        this.refreshFrame();
       }
     });
   }
@@ -119,27 +135,21 @@ class ProjectV23 {
     document.body.appendChild(overlay);
 
     try {
-      // Clear current frame
-      this.mainFrame.src = 'about:blank';
-      await new Promise(resolve => setTimeout(resolve, 100));
+      if (this.mainFrame) {
+        this.mainFrame.src = this.getVersionURL(version);
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => reject(new Error('Load timeout')), 10000);
+          this.mainFrame.onload = () => {
+            clearTimeout(timeout);
+            resolve();
+          };
+        });
+      }
 
-      // Update frame source with version parameter
-      this.mainFrame.src = this.getVersionURL(version);
-      
-      await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('Version load timeout')), 10000);
-        
-        this.mainFrame.onload = () => {
-          clearTimeout(timeout);
-          this.currentVersion = version;
-          this.updateUI(version);
-          resolve();
-        };
-      });
-
-      this.showToast(`Successfully switched to ${version}`);
+      this.currentVersion = version;
+      this.updateUI(version);
+      this.showToast(`Switched to ${version}`);
     } catch (error) {
-      console.error('Version switch error:', error);
       this.showToast(`Failed to load ${version}: ${error.message}`, 'error');
     } finally {
       overlay.remove();
@@ -160,8 +170,12 @@ class ProjectV23 {
       point.classList.toggle('active', point.dataset.version === version);
     });
 
-    // Update frame status
-    document.querySelector('.frame-state').textContent = `Running ${version}`;
+    // Update status
+    const currentVersion = document.querySelector('.current-version');
+    if (currentVersion) currentVersion.textContent = `Current: ${version}`;
+
+    const frameState = document.querySelector('.frame-state');
+    if (frameState) frameState.textContent = `Running ${version}`;
   }
 
   refreshFrame() {
@@ -187,7 +201,6 @@ class ProjectV23 {
     toast.className = `toast ${type}`;
     toast.textContent = message;
     document.body.appendChild(toast);
-    
     setTimeout(() => toast.remove(), 3000);
   }
 }
