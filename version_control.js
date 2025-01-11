@@ -23,7 +23,7 @@ class VersionControl {
         return new Date(storedTimestamps[version]);
       }
       const vNum = parseInt(version.replace('v', ''));
-      return new Date(now - (oneDay * (24 - vNum)));
+      return new Date(now - (oneDay * (17 - vNum)));
     };
 
     const versions = {
@@ -111,36 +111,6 @@ class VersionControl {
         description: 'Enhanced timestamp management with localStorage persistence',
         alias: 'version_seventeen',
         features: ['persistent timestamps', 'version history tracking', 'dynamic time management']
-      },
-      'v18': {
-        description: 'Improved version comparison with detailed differences',
-        alias: 'version_eighteen',
-        features: ['detailed comparison', 'version differences', 'improved UI']
-      },
-      'v19': {
-        description: 'Enhanced version filtering and sorting capabilities',
-        alias: 'version_nineteen',
-        features: ['version filtering', 'sorting capabilities', 'advanced search']
-      },
-      'v20': {
-        description: 'Advanced version merging with conflict resolution',
-        alias: 'version_twenty',
-        features: ['advanced merging', 'conflict resolution', 'version integration']
-      },
-      'v21': {
-        description: 'Enhanced version control with improved performance',
-        alias: 'version_twentyone',
-        features: ['improved performance', 'version optimization', 'faster loading']
-      },
-      'v22': {
-        description: 'Improved version management with detailed metrics',
-        alias: 'version_twentytwo',
-        features: ['detailed metrics', 'version analysis', 'performance monitoring']
-      },
-      'v23': {
-        description: 'Enhanced version switching with real-time updates',
-        alias: 'version_twentythree',
-        features: ['real-time updates', 'version switching', 'instant feedback']
       }
     };
 
@@ -153,21 +123,6 @@ class VersionControl {
       });
     }
 
-    // Add v24 version info
-    this.versions.set('v24', {
-      version: 'v24',
-      description: 'Enhanced version control with improved UI and version switching',
-      alias: 'version_twentyfour',
-      features: [
-        'Clean UI architecture',
-        'Improved version switching',
-        'Fixed duplicate UI issues',
-        'Enhanced timeline visualization',
-        'Better version state management'
-      ],
-      timestamp: getTimestamp('v24')
-    });
-
     // Store initial timestamps if they don't exist
     if (!localStorage.getItem('versionTimestamps')) {
       const timestamps = {};
@@ -179,7 +134,7 @@ class VersionControl {
   }
 
   getCurrentVersion() {
-    return 'v24';
+    return 'v17';
   }
 
   getAllVersions() {
