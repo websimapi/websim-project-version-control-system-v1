@@ -3,6 +3,7 @@ class VersionControl {
   constructor() {
     this.versions = new Map();
     this.initializeVersions();
+    this.onMerge = null; // Callback for merge events
   }
 
   initializeVersions() {
@@ -41,7 +42,7 @@ class VersionControl {
     this.versions.set('v5', {
       version: 'v5',
       timestamp: new Date('2024-01-05'),
-      description: 'Latest version with advanced merging capabilities',
+      description: 'Smart merging capabilities and conflict resolution',
       alias: 'version_five',
       features: ['smart merging', 'conflict resolution', 'version branching']
     });
@@ -53,10 +54,18 @@ class VersionControl {
       alias: 'version_six',
       features: ['branch visualization', 'version switching', 'interactive branch management']
     });
+
+    this.versions.set('v7', {
+      version: 'v7',
+      timestamp: new Date('2024-01-07'),
+      description: 'Enhanced visualization and detailed branch metrics',
+      alias: 'version_seven',
+      features: ['detailed branch visualization', 'merge history tracking', 'branch metrics', 'timeline view']
+    });
   }
 
   getCurrentVersion() {
-    return 'v6';
+    return 'v7';
   }
 
   getAllVersions() {
@@ -97,8 +106,11 @@ class VersionControl {
   }
 
   mergeVersions(versions) {
-    console.log('Merging versions:', versions);
-    return versions.map(v => this.getVersionInfo(v));
+    const mergeResult = versions.map(v => this.getVersionInfo(v));
+    if (this.onMerge) {
+      this.onMerge(versions, mergeResult);
+    }
+    return mergeResult;
   }
 }
 

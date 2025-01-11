@@ -2,8 +2,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Version Control System - V6</title>
-  <link rel="stylesheet" href="v6/styles.css">
+  <title>Project Version Control System - V7</title>
+  <link rel="stylesheet" href="v7/styles.css">
 </head>
 <body>
   <div class="version-container">
@@ -16,14 +16,15 @@
         <button class="command-btn" data-command="!tree">Show Tree</button>
         <button class="command-btn" data-command="!branches">Show Branches</button>
         <button class="command-btn" data-command="!visual">Visual Branches</button>
-        <button class="command-btn" data-command="!switch v6">Switch to V6</button>
-        <button class="command-btn" data-command="!merge v5 v6">Merge Latest</button>
+        <button class="command-btn" data-command="!detailed">Detailed View</button>
+        <button class="command-btn" data-command="!history">Merge History</button>
+        <button class="command-btn" data-command="!switch v7">Switch to V7</button>
         <button class="command-btn" data-command="!help">Help</button>
       </div>
     </div>
 
     <div class="command-center">
-      <input type="text" id="command-input" placeholder="Enter command (e.g., !list, !visual, !switch v6)">
+      <input type="text" id="command-input" placeholder="Enter command (e.g., !list, !detailed, !switch v7)">
       <button id="execute-command">Execute</button>
     </div>
     <div id="version-display" class="version-display">
@@ -43,9 +44,10 @@
   <script src="v4/main.js"></script>
   <script src="v5/main.js"></script>
   <script src="v6/main.js"></script>
+  <script src="v7/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const project = new ProjectV6();
+      const project = new ProjectV7();
       project.initialize();
     });
   </script>
