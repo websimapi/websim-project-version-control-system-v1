@@ -7,10 +7,23 @@ class ProjectV4 extends ProjectV3 {
   }
 
   initializeDependencies() {
-    this.dependencies.set('v1', []);
-    this.dependencies.set('v2', ['v1']);
-    this.dependencies.set('v3', ['v2']);
-    this.dependencies.set('v4', ['v3']);
+    // Enhanced dependencies map with more detail
+    this.dependencies.set('v1', {
+      deps: [],
+      features: ['version display', 'basic UI']
+    });
+    this.dependencies.set('v2', {
+      deps: ['v1'],
+      features: ['command system', 'history tracking', 'version comparison']
+    });
+    this.dependencies.set('v3', {
+      deps: ['v2'],
+      features: ['quick access buttons', 'improved UI', 'command shortcuts']
+    });
+    this.dependencies.set('v4', {
+      deps: ['v3'],
+      features: ['advanced version tracking', 'version dependencies', 'tree visualization']
+    });
   }
 
   initialize() {
@@ -40,12 +53,16 @@ class ProjectV4 extends ProjectV3 {
   }
 
   showDependencies(version) {
-    const deps = this.dependencies.get(version);
-    if (deps) {
+    const versionData = this.dependencies.get(version);
+    if (versionData) {
       this.displayMessage(`
         <h3>Dependencies for ${version}</h3>
         <ul>
-          ${deps.map(d => `<li>${d}</li>`).join('')}
+          ${versionData.deps.map(d => `<li>${d}</li>`).join('')}
+        </ul>
+        <h4>Features:</h4>
+        <ul>
+          ${versionData.features.map(f => `<li>${f}</li>`).join('')}
         </ul>
       `);
     } else {
@@ -55,14 +72,34 @@ class ProjectV4 extends ProjectV3 {
 
   showVersionTree() {
     let tree = '<h3>Version Dependency Tree</h3><div class="version-tree">';
-    for (const [version, deps] of this.dependencies) {
-      tree += `
+    const renderNode = (version) => {
+      const versionData = this.dependencies.get(version);
+      if (!versionData) return '';
+
+      const versionInfo = this.versionControl.getVersionInfo(version);
+      return `
         <div class="tree-node">
-          <span class="version">${version}</span>
-          ${deps.length ? `<span class="deps">← ${deps.join(', ')}</span>` : ''}
+          <div class="version-info">
+            <span class="version">${version}</span>
+            <span class="version-alias">(${versionInfo.alias})</span>
+          </div>
+          ${versionData.deps.length ? `
+            <div class="deps">
+              Dependencies: ${versionData.deps.join(', ')}
+            </div>
+          ` : ''}
+          <div class="features">
+            ${versionData.features.map(f => `<span class="feature-tag">${f}</span>`).join('')}
+          </div>
         </div>
       `;
-    }
+    };
+
+    // Render tree in version order
+    ['v1', 'v2', 'v3', 'v4'].forEach(version => {
+      tree += renderNode(version);
+    });
+    
     tree += '</div>';
     this.displayMessage(tree);
   }
